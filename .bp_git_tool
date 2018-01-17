@@ -1,0 +1,74 @@
+
+# git branch name
+parse_git_branch() {
+    git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+}
+
+# git autocomplete
+if [ -f ~/.git-completion.bash ]; then
+  . ~/.git-completion.bash
+fi
+
+# some small git aliasses
+alias gpushg='git push origin HEAD:refs/for/develop' #push gerrit
+alias gclean='git clean -df && git checkout -- .' #ignore local changes
+alias gstat='git status'
+alias gpull='git pull'
+alias gcom='git commit -m $1'
+alias gadd='git add .'
+
+# select a branch with prompt (used by other functions)
+function git_branch_prompt(){
+  branch_val=$(git branch --sort=-committerdate)
+  ls_val=$(ls| sed 's#/##')
+  branches=$(echo ${branch_val[@]} ${ls_val[@]} | tr ' ' '\n' | sort | uniq -u)
+  cnt=0
+  echo $cnt " - cancel checkout. Stop"
+  cnt=$((cnt+1))
+  for branch in ${branches[@]}; do
+    echo $cnt " - " $branch
+    cnt=$((cnt+1))
+  done
+  read -p "Switch to: " input
+  if [ "$input" -eq "0" ]; then
+    abort=1;
+    return 1;
+  fi
+  index=$((input-1))
+  arr=($branches)
+  selected_branch=${arr[$index]}
+  if [ "$selected_branch" == "master" ]; then
+      echo "You selected the master brach. Are you sure?"
+      echo "Press y to continue, everything else will abort."
+      read -p "Master?! Are you sure: " conval
+      if [ "$conval" == "y" ]; then
+        abort=0
+      else
+        abort=1
+        return 1;  
+      fi   
+  fi
+  abort=0;
+  output=$selected_branch
+  return 0;
+}
+
+function gcheck(){
+  git_branch_prompt;
+  if [ "$abort" -eq "0" ]; then
+    git checkout $output
+  fi
+}
+
+function gmerge(){
+  git_branch_prompt;
+  if [ "$abort" -eq "0" ]; then
+    git merge $output
+  fi
+}
+
+
+
+
+
+

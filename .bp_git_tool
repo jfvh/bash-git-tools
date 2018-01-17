@@ -10,12 +10,12 @@ if [ -f ~/.git-completion.bash ]; then
 fi
 
 # some small git aliasses
-alias gpushg='git push origin HEAD:refs/for/develop' #push gerrit
-alias gclean='git clean -df && git checkout -- .' #ignore local changes
+alias gclean='git clean -df && git checkout -- .' #remove and clean local changes, go back to head. Use with care :)
 alias gstat='git status'
 alias gpull='git pull'
 alias gcom='git commit -m $1'
 alias gadd='git add .'
+alias gpush='git push'
 
 # select a branch with prompt (used by other functions)
 function git_branch_prompt(){
@@ -66,6 +66,8 @@ function gmerge(){
     git merge $output
   fi
 }
+
+
 
 
 

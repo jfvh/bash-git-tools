@@ -16,7 +16,6 @@ alias gpull='git pull'
 alias gcom='git commit -m $1'
 alias gadd='git add .'
 alias gpush='git push'
-alias gce='git commit --allow-empty -m \"NOJIRA build\"'
 
 # select a branch with prompt (used by other functions)
 function git_branch_prompt(){
@@ -48,6 +47,16 @@ function git_get_story_number(){
   story_number=${branch_name##*/}
   output=$story_number;
   return 0;
+}
+
+function gce(){
+  git_get_story_number;
+  if [ "$output" == "master" ]; then
+    output="NOJIRA";
+  fi
+  commit_message="$output kick build - empty commit";
+  echo "Empty commit with message: $commit_message";
+  git commit --allow-empty -m "$commit_message"
 }
 
 function gcs(){

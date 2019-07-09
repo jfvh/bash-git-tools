@@ -16,6 +16,7 @@ alias gpull='git pull'
 alias gcom='git commit -m $1'
 alias gadd='git add .'
 alias gpush='git push'
+alias glog='git log --oneline'
 
 # select a branch with prompt (used by other functions)
 function git_branch_prompt(){
